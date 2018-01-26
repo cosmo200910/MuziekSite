@@ -1,0 +1,29 @@
+#pageTitle
+{
+    margin-top: 10px;
+    margin-bottom:20px;
+}
+
+audio
+{
+    width: 100%;
+    color:lightblue;
+}
+#content
+{
+    padding-left: 10px;
+    padding-right: 10px;
+
+}
+
+.songblock
+{
+    margin-bottom:20px;
+}
+
+.delete {
+
+    float: right;
+
+}
+

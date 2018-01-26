@@ -1,0 +1,28 @@
+
+{% extends 'base.html.twig' %}
+{% block stylesheets %}
+    {{ parent() }}
+    <link href="{{ asset('css/home.css') }}" rel="stylesheet" />
+{% endblock %}
+
+{% block body %}
+
+    <div class="container align-middle">
+
+        <div class="row">
+            <div class="col">
+                <div class="card">
+                    <h3 class="card-header"></h3>
+                    <div class="card-block">
+                        <h4 class="card-title">Songs</h4>
+                        <p class="card-text">You've uploaded {{ songCount }} songs.</p>
+                        <a href="{{ path('show_own_songs') }}" class="btn btn-primary">My Songs</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+
+{% endblock %}

@@ -1,0 +1,20 @@
+#loginbox
+{
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    -webkit-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+}
+
+#password
+{
+    margin-left: 5px;
+}
+
+#loginbox
+{
+    border-radius: 20px;
+    border: 2px solid darkgrey;
+    padding: 20px;
+}

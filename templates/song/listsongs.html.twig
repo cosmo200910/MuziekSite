@@ -1,0 +1,121 @@
+{% extends 'base.html.twig' %}
+
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link href="{{ asset('css/listsongs.css') }}" rel="stylesheet" />
+{% endblock %}
+{% block title %}My Songs{% endblock %}
+{% block body %}
+
+    <div id="content">
+<h1 id="pageTitle">My Songs</h1>
+<hr>
+    {% for song in songs %}
+    <div class="card songblock">
+        <div class="card-block">
+            <h1>{{ song.name }}</h1>
+            <p>{{ song.description }}</p>
+            <audio controls>
+                <source src="/uploads/songs/{{ song.uploadPath }}" type="audio/mpeg">
+                Your browser does not support the audio element.
+            </audio>
+            <p>Upload date: {{ song.date }}</p>
+            <input type="hidden" value=" {{ song.id }}"/>
+            <a href="/uploads/songs/{{ song.uploadPath }}" class="btn btn-primary download">Download</a>
+            <button type="button" class="btn btn-secondary edit">Edit</button>
+            <button type="button" class="btn btn-danger delete">Delete</button>
+        </div>
+    </div>
+
+    {% endfor %}
+
+    </div>
+
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script src="https://unpkg.com/sweetalert2@7.1.2/dist/sweetalert2.all.js"></script>
+    <script> $(".delete").click(function() {
+
+            var clickedCard = $(this).parent().parent();
+            swal({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.value) {
+
+                    var routePath = "{{ (path('delete_song')) }}"
+                $.post(routePath,
+                    {
+                        id: $(this).parent().find("input").val(),
+                    },
+                    function(data){
+
+                    if(data.status == 'success') {
+                        clickedCard.remove();
+                    }
+                    else
+                    {
+                        swal(
+                            'Oops...',
+                            'Something went wrong!',
+                            'error'
+                        )
+                    }
+
+                    });
+
+
+            }
+        })
+        });
+
+    $(".edit").click(function()
+    {
+        var clickedCard = $(this).parent().parent();
+
+        swal({
+            title: 'Edit song info',
+            html: 'Name: <input type="text" id="editName" class="form-control" name="name"><br>Description: <input type="text" id="editDescription" class="form-control" name="name">',
+            showCancelButton: true
+        }).then((result) => {
+            if(result.value)
+        {
+            var routePath = "{{ (path('edit_song')) }}"
+            $.post(routePath,
+                {
+                    id: $(this).parent().find("input").val(),
+                    name: $('#editName').val(),
+                    description: $('#editDescription').val()
+                },
+                function(data){
+
+                if(data.status == 'error')
+                {
+                    swal(
+                        'Oops...',
+                        'Something went wrong!',
+                        'error'
+                    )
+                }
+                   else if(data.status == 'success') {
+                        clickedCard.find("h1").text(data.name);
+                        clickedCard.find("p").first().text(data.description);
+                    }
+
+
+                });
+        }
+
+        })
+    });
+    </script>
+
+
+{% endblock %}

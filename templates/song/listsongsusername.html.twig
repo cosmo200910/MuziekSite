@@ -1,0 +1,87 @@
+{% extends 'base.html.twig' %}
+
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link href="{{ asset('css/listsongs.css') }}" rel="stylesheet" />
+{% endblock %}
+{% block title %}{{ username }}'s Songs{% endblock %}
+{% block body %}
+
+    <div id="content">
+        <h1 id="pageTitle">{{ username }}'s Songs</h1>
+    {% if ownPage == true %}
+        <a href=" {{ path('show_own_songs') }} " class="btn btn-secondary edit" id="editsongsbutton">Edit</a>
+    {% endif %}
+        <hr>
+        {% for song in songs %}
+            <div class="card songblock">
+                <div class="card-block">
+                    <h1>{{ song.name }}</h1>
+                    <p>{{ song.description }}</p>
+                    <audio controls>
+                        <source src="/uploads/songs/{{ song.uploadPath }}" type="audio/mpeg">
+                        Your browser does not support the audio element.
+                    </audio>
+                    <p>Upload date: {{ song.date }}</p>
+                    <input type="hidden" value="{{ song.id }}"/>
+                    {% if (ownPage != true) and  (is_granted("IS_AUTHENTICATED_REMEMBERED")) %}
+                        {% if song.id in loggedInUserLikes %}
+                            <button type="button" class="btn btn-success like" style="display:none;">Like</button>
+                            <button type="button" class="btn btn-danger unlike">Unlike</button>
+                            {#  LIKED  #}
+                        {% else %}
+                            <button type="button" class="btn btn-success like">Like</button>
+                            <button type="button" class="btn btn-danger unlike" style="display:none;">Unlike</button>
+                            {#  NOT LIKED  #}
+                            {% endif %}
+                    {% endif %}
+                </div>
+            </div>
+
+        {% endfor %}
+
+    </div>
+
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+<script>
+
+
+    $(".like").click(function() {
+
+        var routePath = "{{ (path('song_like_add')) }}";
+        var clickedLikeButton = $(this);
+        $.post(routePath,
+            {
+                songID: $(this).parent().find("input").val(),
+            },
+            function(data) {
+
+                if (data.status == 'success') {
+                    clickedLikeButton.hide();
+                    clickedLikeButton.parent().find("button.unlike").show();
+                }
+            });
+    });
+
+    $(".unlike").click(function() {
+        var clickedDeleteButton = $(this);
+        var routePath = "{{ (path('delete_like')) }}";
+        $.post(routePath,
+            {
+                songID: $(this).parent().find("input").val(),
+            },
+            function (data) {
+
+                if (data.status == 'success') {
+                    clickedDeleteButton.hide();
+                    clickedDeleteButton.parent().find("button.like").show();
+                }
+
+            });
+    });
+
+</script>
+{% endblock %}
